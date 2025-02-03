@@ -1,7 +1,33 @@
 ---
-title: "mysite"
+title: "Madeline Blok"
+subtitle: "Mathematics | International Relations"
+image: profile.jpg
+about:
+  template: solana 
+  links: 
+    - icon: linkedin
+      text: LinkedIn
+      href: linkedin.com/madelineblok 
 ---
 
-This is a Quarto website.
+{{< lipsum 1 >}} 
+
+## Education 
+
+##### University of Texas, Austin | Austin, TX
+
+BS in Mathematics | August 2020 - May 2025 
+
+BA in International Relations & Global Studies | August 2020 - May 2025
+
+## Experience 
+
+##### UT RecSports, Austin | Austin, TX
+
+Safety Education Program Assistant | March 2024 - Present
+
+Head Lifeguard | Feburary 2022 - Present 
+
+
 
 To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
