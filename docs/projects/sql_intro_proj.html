@@ -442,13 +442,13 @@ head(result)
 ::: {.cell-output .cell-output-stdout}
 
 ```
-  carrier      manufacturer          model count(distinct_tailnums.tailnum)
-1      EV           EMBRAER      EMB-145XR                              104
-2      DL            BOEING        757-232                               94
-3      UA            BOEING        757-224                               41
-4      FL            BOEING        717-200                               88
-5      AA MCDONNELL DOUGLAS DC-9-82(MD-82)                               56
-6      F9            AIRBUS       A320-214                               14
+  carrier      manufacturer     model count(distinct_tailnums.tailnum)
+1      US  AIRBUS INDUSTRIE  A319-112                               54
+2      UA            BOEING   757-33N                               12
+3      DL            BOEING   767-3P6                                6
+4      DL MCDONNELL DOUGLAS  MD-90-30                               31
+5      DL            BOEING 767-432ER                               17
+6      MQ            CESSNA      172N                                1
 ```
 
 
@@ -475,10 +475,10 @@ head(result)
 <table class="caption-top table table-sm table-striped small">
 <caption>Displaying records 1 - 10</caption>
 <colgroup>
-<col style="width: 9%">
-<col style="width: 36%">
+<col style="width: 11%">
+<col style="width: 27%">
 <col style="width: 14%">
-<col style="width: 39%">
+<col style="width: 47%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -490,64 +490,64 @@ head(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">DL</td>
-<td style="text-align: left;">MCDONNELL DOUGLAS AIRCRAFT CO</td>
-<td style="text-align: left;">MD-88</td>
-<td style="text-align: right;">103</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">9E</td>
-<td style="text-align: left;">BOMBARDIER INC</td>
-<td style="text-align: left;">CL-600-2B19</td>
-<td style="text-align: right;">140</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">DL</td>
-<td style="text-align: left;">BOEING</td>
-<td style="text-align: left;">737-832</td>
-<td style="text-align: right;">73</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AA</td>
-<td style="text-align: left;">DOUGLAS</td>
-<td style="text-align: left;">DC-7BF</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AS</td>
-<td style="text-align: left;">BOEING</td>
-<td style="text-align: left;">737-8FH</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AA</td>
-<td style="text-align: left;">AMERICAN AIRCRAFT INC</td>
-<td style="text-align: left;">FALCON XP</td>
-<td style="text-align: right;">2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">VX</td>
-<td style="text-align: left;">AIRBUS</td>
+<td style="text-align: left;">US</td>
+<td style="text-align: left;">AIRBUS INDUSTRIE</td>
 <td style="text-align: left;">A319-112</td>
-<td style="text-align: right;">7</td>
+<td style="text-align: right;">54</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">UA</td>
+<td style="text-align: left;">BOEING</td>
+<td style="text-align: left;">757-33N</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DL</td>
+<td style="text-align: left;">BOEING</td>
+<td style="text-align: left;">767-3P6</td>
+<td style="text-align: right;">6</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">DL</td>
 <td style="text-align: left;">MCDONNELL DOUGLAS</td>
-<td style="text-align: left;">DC-9-51</td>
-<td style="text-align: right;">8</td>
+<td style="text-align: left;">MD-90-30</td>
+<td style="text-align: right;">31</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">OO</td>
-<td style="text-align: left;">BOMBARDIER INC</td>
-<td style="text-align: left;">CL-600-2B19</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: left;">DL</td>
+<td style="text-align: left;">BOEING</td>
+<td style="text-align: left;">767-432ER</td>
+<td style="text-align: right;">17</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">US</td>
+<td style="text-align: left;">MQ</td>
+<td style="text-align: left;">CESSNA</td>
+<td style="text-align: left;">172N</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DL</td>
 <td style="text-align: left;">BOEING</td>
-<td style="text-align: left;">757-2B7</td>
-<td style="text-align: right;">2</td>
+<td style="text-align: left;">717-200</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DL</td>
+<td style="text-align: left;">BOEING</td>
+<td style="text-align: left;">757-2Q8</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">FL</td>
+<td style="text-align: left;">BOEING</td>
+<td style="text-align: left;">737-7BD</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B6</td>
+<td style="text-align: left;">CIRRUS DESIGN CORP</td>
+<td style="text-align: left;">SR22</td>
+<td style="text-align: right;">1</td>
 </tr>
 </tbody>
 </table>
