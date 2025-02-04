@@ -7,11 +7,39 @@
     "text": "About this site"
   },
   {
-    "objectID": "projects.html",
-    "href": "projects.html",
-    "title": "Projects",
+    "objectID": "projects/sql_intro_proj.html",
+    "href": "projects/sql_intro_proj.html",
+    "title": "Intro to SQL with DuckDB",
     "section": "",
-    "text": "About this site"
+    "text": "#setwd(projects)\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.4     ✔ readr     2.1.5\n✔ forcats   1.0.0     ✔ stringr   1.5.1\n✔ ggplot2   3.5.1     ✔ tibble    3.2.1\n✔ lubridate 1.9.4     ✔ tidyr     1.3.1\n✔ purrr     1.0.2     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(nycflights13)\nlibrary(DBI)\nlibrary(duckdb)"
+  },
+  {
+    "objectID": "projects/sql_intro_proj.html#create-the-flights-database-in-duckdb",
+    "href": "projects/sql_intro_proj.html#create-the-flights-database-in-duckdb",
+    "title": "Intro to SQL with DuckDB",
+    "section": "Create the Flights Database in DuckDB",
+    "text": "Create the Flights Database in DuckDB\n\ndata(airlines)\ndata(airports)\ndata(flights)\ndata(planes)\ndata(weather)\n\ncon &lt;- dbConnect(\n  drv = duckdb(),\n  dbdir = \"data/flights_db.duckdb\",\n  read_only = FALSE\n)\n\ndbWriteTable(con, \"airlines\", airlines, overwrite =TRUE)\ndbWriteTable(con, \"airports\", airports, overwrite =TRUE)\ndbWriteTable(con, \"flights\", flights, overwrite =TRUE)\ndbWriteTable(con, \"planes\", planes, overwrite =TRUE)\ndbWriteTable(con, \"weather\", weather, overwrite =TRUE)\n\ndbDisconnect(con, shutdown = TRUE)"
+  },
+  {
+    "objectID": "projects/sql_intro_proj.html#create-the-query-connection",
+    "href": "projects/sql_intro_proj.html#create-the-query-connection",
+    "title": "Intro to SQL with DuckDB",
+    "section": "Create the query connection",
+    "text": "Create the query connection\n\ncon_flights &lt;- DBI::dbConnect(\n  drv = duckdb::duckdb(),\n  dbdir = \"./data/flights_db.duckdb\",\n  read_only = TRUE\n)"
+  },
+  {
+    "objectID": "projects/sql_intro_proj.html#query-the-database-with-an-r-chunk",
+    "href": "projects/sql_intro_proj.html#query-the-database-with-an-r-chunk",
+    "title": "Intro to SQL with DuckDB",
+    "section": "Query the Database with an R chunk",
+    "text": "Query the Database with an R chunk\n\ntables &lt;- dbListTables(con_flights)\nprint(tables) \n\n[1] \"airlines\" \"airports\" \"flights\"  \"planes\"   \"weather\" \n\nresult &lt;- dbGetQuery(\n  con_flights, \n  \"SELECT * FROM flights LIMIT 10\"\n)\nprint(result)\n\n   year month day dep_time sched_dep_time dep_delay arr_time sched_arr_time\n1  2013     1   1      517            515         2      830            819\n2  2013     1   1      533            529         4      850            830\n3  2013     1   1      542            540         2      923            850\n4  2013     1   1      544            545        -1     1004           1022\n5  2013     1   1      554            600        -6      812            837\n6  2013     1   1      554            558        -4      740            728\n7  2013     1   1      555            600        -5      913            854\n8  2013     1   1      557            600        -3      709            723\n9  2013     1   1      557            600        -3      838            846\n10 2013     1   1      558            600        -2      753            745\n   arr_delay carrier flight tailnum origin dest air_time distance hour minute\n1         11      UA   1545  N14228    EWR  IAH      227     1400    5     15\n2         20      UA   1714  N24211    LGA  IAH      227     1416    5     29\n3         33      AA   1141  N619AA    JFK  MIA      160     1089    5     40\n4        -18      B6    725  N804JB    JFK  BQN      183     1576    5     45\n5        -25      DL    461  N668DN    LGA  ATL      116      762    6      0\n6         12      UA   1696  N39463    EWR  ORD      150      719    5     58\n7         19      B6    507  N516JB    EWR  FLL      158     1065    6      0\n8        -14      EV   5708  N829AS    LGA  IAD       53      229    6      0\n9         -8      B6     79  N593JB    JFK  MCO      140      944    6      0\n10         8      AA    301  N3ALAA    LGA  ORD      138      733    6      0\n             time_hour\n1  2013-01-01 10:00:00\n2  2013-01-01 10:00:00\n3  2013-01-01 10:00:00\n4  2013-01-01 10:00:00\n5  2013-01-01 11:00:00\n6  2013-01-01 10:00:00\n7  2013-01-01 11:00:00\n8  2013-01-01 11:00:00\n9  2013-01-01 11:00:00\n10 2013-01-01 11:00:00\n\n\n\nGet the number of flights each plane went on\n\n# get the number of flights each plane went on \n\n#| label: get flight count \n\nresult &lt;- dbGetQuery(\n  con_flights, \n\n\"\nSELECT COUNT(all_tailnum.tailnum) AS 'n_flights', all_tailnum.tailnum\nFROM(\n  SELECT flights.tailnum\n  FROM flights\n) AS all_tailnum\nGROUP BY all_tailnum.tailnum\nORDER BY n_flights DESC \n\"\n)\nhead(result)\n\n  n_flights tailnum\n1       575  N725MQ\n2       513  N722MQ\n3       507  N723MQ\n4       486  N711MQ\n5       483  N713MQ\n6       427  N258JB"
+  },
+  {
+    "objectID": "projects/sql_intro_proj.html#query-the-database-with-a-sql-chunk",
+    "href": "projects/sql_intro_proj.html#query-the-database-with-a-sql-chunk",
+    "title": "Intro to SQL with DuckDB",
+    "section": "Query the Database with a SQL chunk",
+    "text": "Query the Database with a SQL chunk\n\nSELECT * FROM airlines LIMIT 10;\n\n\nDisplaying records 1 - 10\n\n\ncarrier\nname\n\n\n\n\n9E\nEndeavor Air Inc.\n\n\nAA\nAmerican Airlines Inc.\n\n\nAS\nAlaska Airlines Inc.\n\n\nB6\nJetBlue Airways\n\n\nDL\nDelta Air Lines Inc.\n\n\nEV\nExpressJet Airlines Inc.\n\n\nF9\nFrontier Airlines Inc.\n\n\nFL\nAirTran Airways Corporation\n\n\nHA\nHawaiian Airlines Inc.\n\n\nMQ\nEnvoy Air\n\n\n\n\n\n\n\nGet the manufacturer and model fleet informaiton for each carrier\n\nSELECT airlines.carrier, manufacturer, model, COUNT(distinct_tailnums.tailnum) \nFROM (\n  SELECT DISTINCT flights.tailnum, flights.carrier, manufacturer, model\n  FROM flights \n  LEFT JOIN planes\n  ON flights.tailnum=planes.tailnum\n) AS distinct_tailnums\nLEFT JOIN airlines \nON distinct_tailnums.carrier = airlines.carrier\nGROUP BY airlines.carrier, manufacturer, model\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\ncarrier\nmanufacturer\nmodel\ncount(distinct_tailnums.tailnum)\n\n\n\n\nDL\nMCDONNELL DOUGLAS AIRCRAFT CO\nMD-88\n103\n\n\n9E\nBOMBARDIER INC\nCL-600-2B19\n140\n\n\nDL\nBOEING\n737-832\n73\n\n\nAA\nDOUGLAS\nDC-7BF\n1\n\n\nAS\nBOEING\n737-8FH\n1\n\n\nAA\nAMERICAN AIRCRAFT INC\nFALCON XP\n2\n\n\nVX\nAIRBUS\nA319-112\n7\n\n\nDL\nMCDONNELL DOUGLAS\nDC-9-51\n8\n\n\nOO\nBOMBARDIER INC\nCL-600-2B19\n3\n\n\nUS\nBOEING\n757-2B7\n2"
   },
   {
     "objectID": "research.html",
@@ -21,11 +49,18 @@
     "text": "about this page"
   },
   {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Intro to SQL with DuckDB\n\n\n\nduckdb\n\n\nSQL\n\n\n\nA beginner’s guide to SQL using DuckDB\n\n\n\nMadeline\n\n\nFeb 2, 2025\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Madeline Blok",
     "section": "",
-    "text": "Praesent ornare dolor turpis, sed tincidunt nisl pretium eget. Curabitur sed iaculis ex, vitae tristique sapien. Quisque nec ex dolor. Quisque ut nisl a libero egestas molestie. Nulla vel porta nulla. Phasellus id pretium arcu. Etiam sed mi pellentesque nibh scelerisque elementum sed at urna. Ut congue molestie nibh, sit amet pretium ligula consectetur eu. Integer consectetur augue justo, at placerat erat posuere at. Ut elementum urna lectus, vitae bibendum neque pulvinar quis. Suspendisse vulputate cursus eros id maximus. Duis pulvinar facilisis massa, et condimentum est viverra congue. Curabitur ornare convallis nisl. Morbi dictum scelerisque turpis quis pellentesque. Etiam lectus risus, luctus lobortis risus ut, rutrum vulputate justo. Nulla facilisi."
+    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
   },
   {
     "objectID": "index.html#education",

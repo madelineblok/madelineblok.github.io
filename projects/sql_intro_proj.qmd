@@ -1,0 +1,140 @@
+--- 
+title: "Intro to SQL with DuckDB"
+description: "A beginner's guide to SQL using DuckDB"
+author: "Madeline"
+date: "2/2/2025"
+categories: 
+  - duckdb
+  - SQL 
+---
+
+```{r}
+#setwd(projects)
+
+library(tidyverse)
+library(nycflights13)
+library(DBI)
+library(duckdb)
+```
+
+## Create the Flights Database in DuckDB
+```{r}
+#| eval = FALSE 
+
+data(airlines)
+data(airports)
+data(flights)
+data(planes)
+data(weather)
+
+con <- dbConnect(
+  drv = duckdb(),
+  dbdir = "data/flights_db.duckdb",
+  read_only = FALSE
+)
+
+dbWriteTable(con, "airlines", airlines, overwrite =TRUE)
+dbWriteTable(con, "airports", airports, overwrite =TRUE)
+dbWriteTable(con, "flights", flights, overwrite =TRUE)
+dbWriteTable(con, "planes", planes, overwrite =TRUE)
+dbWriteTable(con, "weather", weather, overwrite =TRUE)
+
+dbDisconnect(con, shutdown = TRUE)
+```
+
+## Create the query connection 
+``` {r}
+con_flights <- DBI::dbConnect(
+  drv = duckdb::duckdb(),
+  dbdir = "./data/flights_db.duckdb",
+  read_only = TRUE
+)
+```
+
+## Query the Database with an R chunk
+```{r}
+tables <- dbListTables(con_flights)
+print(tables) 
+
+result <- dbGetQuery(
+  con_flights, 
+  "SELECT * FROM flights LIMIT 10"
+)
+print(result)
+```
+
+### Get the number of flights each plane went on 
+```{r}
+# get the number of flights each plane went on 
+
+#| label: get flight count 
+
+result <- dbGetQuery(
+  con_flights, 
+
+"
+SELECT COUNT(all_tailnum.tailnum) AS 'n_flights', all_tailnum.tailnum
+FROM(
+  SELECT flights.tailnum
+  FROM flights
+) AS all_tailnum
+GROUP BY all_tailnum.tailnum
+ORDER BY n_flights DESC 
+"
+)
+head(result)
+```
+
+## Query the Database with a SQL chunk  
+```{sql}
+#| label: get-carriers
+#| connection: con_flights 
+
+SELECT * FROM airlines LIMIT 10;
+```
+
+<!---
+new stuff pt. 2 (r code)
+```{r}
+# get the manufacturer and model fleet informaiton for each carrier 
+
+#| label: get fleet composition  
+
+result <- dbGetQuery(
+  con_flights, 
+
+"
+SELECT airlines.carrier, manufacturer, model, COUNT(distinct_tailnums.tailnum) 
+FROM (
+  SELECT DISTINCT flights.tailnum, flights.carrier, manufacturer, model
+  FROM flights 
+  LEFT JOIN planes
+  ON flights.tailnum=planes.tailnum
+) AS distinct_tailnums
+LEFT JOIN airlines 
+ON distinct_tailnums.carrier = airlines.carrier
+GROUP BY airlines.carrier, manufacturer, model
+"
+)
+
+head(result)
+```
+--->
+
+### Get the manufacturer and model fleet informaiton for each carrier
+```{sql}
+#| label: get fleet composition
+#| connection: con_flights
+
+SELECT airlines.carrier, manufacturer, model, COUNT(distinct_tailnums.tailnum) 
+FROM (
+  SELECT DISTINCT flights.tailnum, flights.carrier, manufacturer, model
+  FROM flights 
+  LEFT JOIN planes
+  ON flights.tailnum=planes.tailnum
+) AS distinct_tailnums
+LEFT JOIN airlines 
+ON distinct_tailnums.carrier = airlines.carrier
+GROUP BY airlines.carrier, manufacturer, model
+
+```

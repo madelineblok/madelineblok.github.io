@@ -7,7 +7,7 @@ about:
   links: 
     - icon: linkedin
       text: LinkedIn
-      href: linkedin.com/madelineblok 
+      href: www.linkedin.com/in/madelineblok 
 ---
 
 {{< lipsum 1 >}} 
